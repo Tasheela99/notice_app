@@ -1,0 +1,35 @@
+/* NoticeDetail.css */
+
+.notice-image-container {
+    position: relative;
+}
+
+.notice-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.notice-title {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    color: white!important;
+}
+
+.notice-buttons {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 1;
+    background-color: white;
+    padding: 10px;
+}

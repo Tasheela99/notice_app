@@ -1,0 +1,73 @@
+/* NoticePage.css */
+.header-container {
+    background: url("https://img.freepik.com/premium-photo/colorful-feather-with-colors-rainbow-colors_1322068-1796.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 24px;
+    text-align: center;
+    height: 300px;
+}
+
+.header-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 24px;
+}
+
+.notices-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.notice-card {
+    display: flex;
+    width: 100%; /* Make the card take full width */
+    text-decoration: none;
+    border: 1px solid gray;
+    border-radius: 5px;
+
+}
+
+.notice-image {
+    width: 160px;
+    height: 160px;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-text {
+    font-size: 18px;
+    color: black;
+}
+
+.notice-card-content {
+    padding: 16px;
+    flex: 1;
+}
+
+.notice-date {
+    font-size: 14px;
+    color: black;
+    margin-bottom: 8px;
+}
+
+.notice-title {
+    font-size: 20px;
+    text-align: left!important;
+    color: black!important;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
