@@ -21,6 +21,11 @@ const Navbar = ({ toggleSidebar }) => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 
                 </Typography>
+
+                {/* Links to different authentication routes */}
+                <Button color="inherit" component={Link} to="/authentication/login">
+                    Login
+                </Button>
             </Toolbar>
         </AppBar>
     );
