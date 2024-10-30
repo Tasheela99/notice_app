@@ -75,7 +75,7 @@ function Register() {
     const handleSendVerificationCode = async () => {
         if (formData.email && !errors.email) {
             try {
-                const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/send-mail-to-verify`,
+                const response = await axios.post(`http://localhost:5000/api/v1/auth/send-mail-to-verify`,
                     {email: formData.email}
                 );
                 if (response.data.success) {
@@ -98,7 +98,7 @@ function Register() {
         }
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/verify-mail`, {
+            const response = await axios.post(`http://localhost:5000/api/v1/auth/verify-mail`, {
                 email: formData.email,
                 code: enteredCode,
             });
@@ -115,6 +115,10 @@ function Register() {
     };
 
     const handleSubmit = async (e) => {
+
+        console.log("Request data:", formData);
+
+
         e.preventDefault();
         console.log("Form submission started...");
 
@@ -248,7 +252,7 @@ function Register() {
                             <InputLabel>Position</InputLabel>
                             <Select
                                 name="position"
-                                value={formData.position}
+                                value={formData.position|| ""}
                                 onChange={handleChange}
                                 label="Position"
                             >
@@ -292,7 +296,7 @@ function Register() {
                             <InputLabel>Prefecture</InputLabel>
                             <Select
                                 name="prefecture"
-                                value={formData.prefecture}
+                                value={formData.prefecture|| ""}
                                 onChange={handleChange}
                                 label="Prefecture"
                             >
@@ -354,7 +358,7 @@ function Register() {
                             fullWidth
                             label="Address"
                             name="company_addr"
-                            value={formData.company_addr}
+                            value={formData.company_addr|| ""}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -364,7 +368,7 @@ function Register() {
                             fullWidth
                             label="Building Name"
                             name="building"
-                            value={formData.building}
+                            value={formData.building|| ""}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -375,7 +379,7 @@ function Register() {
                             required
                             label="Telephone Number"
                             name="tel"
-                            value={formData.tel}
+                            value={formData.tel|| ""}
                             onChange={handleChange}
                             placeholder="No hyphen"
                         />
@@ -386,7 +390,7 @@ function Register() {
                             <InputLabel>Industry</InputLabel>
                             <Select
                                 name="type_of_industry"
-                                value={formData.type_of_industry}
+                                value={formData.type_of_industry|| ""}
                                 onChange={handleChange}
                                 label="Industry"
                             >
@@ -437,7 +441,7 @@ function Register() {
                             <InputLabel>Job Type</InputLabel>
                             <Select
                                 name="type"
-                                value={formData.type}
+                                value={formData.type|| ""}
                                 onChange={handleChange}
                                 label="Job Type"
                             >
@@ -580,7 +584,6 @@ function Register() {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        required
                                         name="agree"
                                         checked={formData.agree}
                                         onChange={handleChange}
