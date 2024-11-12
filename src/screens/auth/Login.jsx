@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import AxiosInstance from "../../config/axiosInstance.js";
+// import AxiosInstance from "../../config/axiosInstance.js";
 import { TextField, Button, Typography, Snackbar } from "@mui/material";
 import './Login.css';
 import Divider from '@mui/material/Divider';
 import { Link, useNavigate } from 'react-router-dom';
+import authApi from "../../api/AuthApi.js";
 
 const Login = () => {
 
@@ -15,8 +16,6 @@ const Login = () => {
 
     const login = async () => {
         setErrorMessage('');
-
-        // Validation
         if (!email || !password) {
             setErrorMessage('Please fill in all fields');
             setSnackbarOpen(true);
@@ -24,34 +23,17 @@ const Login = () => {
         }
 
         try {
-            const response = await AxiosInstance.post('/auth/login', {
-                email,
-                password
-            });
-
-            // Access token is in response.data.access_token
+            const response = await authApi.signIn({ email, password });
             const { access_token } = response.data;
-
-            // Set expiration to 2 days from now
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 2);
-
-            // Set the cookie
             document.cookie = `access_token=${access_token}; expires=${expirationDate.toUTCString()}; path=/`;
-
-            // Optional: Store user data in localStorage or context
-            //localStorage.setItem('user', JSON.stringify(user));
-
-            // Redirect to dashboard or home page
-            return navigate( '/dashboard'); // Or use React Router navigation
-
+            return navigate( '/dashboard');
         } catch (error) {
             let message = 'An error occurred. Please try again later.';
-
             if (error.response) {
                 message = error.response.data.message || 'Login failed';
             }
-
             setErrorMessage(message);
             setSnackbarOpen(true);
             console.error('Login error:', error);

@@ -19,4 +19,18 @@ axiosInstance.interceptors.request.use(
     }
 );
 
+export const callAPI = async (method, endpoint, params) => {
+    try {
+        const response = await axiosInstance({
+            method: method,
+            url: endpoint,
+            data: params,
+        });
+        return response;
+    } catch (err) {
+        throw err;
+    }
+};
+
+
 export default axiosInstance;

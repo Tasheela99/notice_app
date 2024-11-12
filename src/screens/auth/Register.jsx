@@ -13,13 +13,11 @@ import {
     FormControlLabel,
     Link,
     Box,
-    Alert
 } from '@mui/material';
 import './Register.css';
-
 import Divider from "@mui/material/Divider";
-
-import AxiosInstance from "../../config/axiosInstance.js";
+import authApi from "../../api/AuthApi.js";
+import AlertDialogBox from '../../components/AlertDialogBox.jsx';
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -47,24 +45,31 @@ function Register() {
     const [verificationCode, setVerificationCode] = useState('');
     const [enteredCode, setEnteredCode] = useState('');
     const [errors, setErrors] = useState({});
+    const [dialogState, setDialogState] = useState({
+        open: false,
+        message: '',
+    });
 
+    // Handle input changes
     const handleChange = (e) => {
-        const {name, value, checked} = e.target;
-        setFormData(prev => ({
+        const { name, value, checked } = e.target;
+        setFormData((prev) => ({
             ...prev,
-            [name]: name === 'agree' ? checked : value
+            [name]: name === 'agree' ? checked : value,
         }));
     };
 
+    // Validate form
     const validate = () => {
         const newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
-        if (!formData.last_name) newErrors.surname = 'Surname is ';
-        if (!formData.first_name) newErrors.name = 'Name is ';
-        if (!formData.email || !emailRegex.test(formData.email))
+        if (!formData.last_name) newErrors.surname = 'Surname is required.';
+        if (!formData.first_name) newErrors.name = 'Name is required.';
+        if (!formData.email || !emailRegex.test(formData.email)) {
             newErrors.email = 'Please enter a valid email';
+        }
         if (!formData.password || !passwordRegex.test(formData.password)) {
             newErrors.password = 'Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.';
         }
@@ -73,100 +78,127 @@ function Register() {
         return Object.keys(newErrors).length === 0;
     };
 
+    // Handle verification code sending
     const handleSendVerificationCode = async () => {
         if (formData.email && !errors.email) {
             try {
-                const response = await AxiosInstance.post(`/auth/send-mail-to-verify`,
-                    {email: formData.email}
-                );
+                const response = await authApi.sendMailToVerify({ email: formData.email });
                 if (response.data.success) {
                     setVerificationCodeSent(true);
                     setVerificationCode(response.data.verificationCode);
-                    alert(`Verification code sent to ${formData.email}`);
+                    setDialogState({
+                        open: true,
+                        message:`Verification code sent to ${formData.email}`,
+                    });
+
                 }
             } catch (error) {
-                alert('Failed to send verification code. Please try again.');
+                setDialogState({
+                    open: true,
+                    message: 'Failed to send verification code. Please try again.',
+                });
             }
         } else {
-            alert('Please enter a valid email before sending a verification code.');
+            setDialogState({
+                open: true,
+                message: 'Please enter a valid email before sending a verification code.',
+            });
         }
     };
 
     const handleVerifyCode = async () => {
         if (!verificationCodeSent) {
-            alert('Please request a verification code first.');
+            setDialogState({
+                open: true,
+                message: 'Please request a verification code first.',
+            });
             return;
         }
-
         try {
-            const response = await AxiosInstance.post(`/auth/verify-mail`, {
+            const response = await authApi.verifyMail({
                 email: formData.email,
                 code: enteredCode,
             });
 
             if (response.data.success) {
                 setEmailConfirmed(true);
-                alert('Email successfully verified!');
+                setDialogState({
+                    open: true,
+                    message: 'Email successfully verified!.',
+                });
             } else {
-                alert('Invalid verification code. Please try again.');
+                setDialogState({
+                    open: true,
+                    message: 'Invalid verification code. Please try again.',
+                });
             }
         } catch (error) {
-            alert('Verification failed. Please try again.');
+            setDialogState({
+                open: true,
+                message: 'Verification failed. Please try again..',
+            });
+
         }
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
-
-        console.log("Request data:", formData);
-
-
         e.preventDefault();
-        console.log("Form submission started...");
-
         if (!validate()) {
-            console.log("Validation failed.");
             return;
         }
-
         if (!emailConfirmed) {
-            alert('Please verify your email before submitting.');
-            console.log("Email confirmation failed.");
+            setDialogState({
+                open: true,
+                message: 'Please verify your email before submitting.',
+            });
             return;
         }
-
-        console.log("Validation and email confirmation passed. Preparing to submit form...");
 
         try {
-            console.log("Form data being sent:", formData);
-            const response = await AxiosInstance.post('/auth/signup', formData);
+            const response = await authApi.signUp(formData);
+            if (response.data && response.data.id) {
+                setDialogState({
+                    open: true,
+                    message: 'Registration successful! You can now log in.',
+                });
+                setFormData({
+                    first_name: '',
+                    last_name: '',
+                    first_name_furigana: '',
+                    last_name_furigana: '',
+                    prefecture: '',
+                    postcode: '',
+                    type_of_industry: '',
+                    type: '',
+                    tel: '',
+                    company_addr: '',
+                    building: '',
+                    company_name: '',
+                    company_name_furigana: '',
+                    position: '',
+                    email: '',
+                    password: '',
+                    agree: false,
+                });
 
-            console.log("Response received:", response);
-
-            if (response.data && (response.data.user || response.data.success)) {
-                alert('Registration successful! You can now log in.');
-                console.log("Registration successful:", response.data);
+                setEmailConfirmed(false);
+                setErrors({});
             } else {
-                console.log("Unexpected response structure:", response.data);
+                setDialogState({
+                    open: true,
+                    message: 'Registration failed. Please try again.',
+                });
             }
         } catch (error) {
-            console.error("Error during registration:", error);
-
-            if (error.response) {
-                // Server responded with a status code out of 2xx range
-                console.error("Server response error:", error.response.data);
-                console.error("Status code:", error.response.status);
-                console.error("Headers:", error.response.headers);
-            } else if (error.request) {
-                // Request was made but no response received
-                console.error("No response received:", error.request);
-            } else {
-                // Something happened in setting up the request
-                console.error("Error setting up request:", error.message);
-            }
-
-            alert('Registration failed. Please try again.');
+            // Handle registration failure
+            setDialogState({
+                open: true,
+                message: 'Registration failed. Please try again.',
+            });
         }
     };
+
 
     return (
         <Container maxWidth="md" className="register-container">
@@ -249,11 +281,11 @@ function Register() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth >
+                        <FormControl fullWidth>
                             <InputLabel>Position</InputLabel>
                             <Select
                                 name="position"
-                                value={formData.position|| ""}
+                                value={formData.position || ""}
                                 onChange={handleChange}
                                 label="Position"
                             >
@@ -293,11 +325,11 @@ function Register() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth >
+                        <FormControl fullWidth>
                             <InputLabel>Prefecture</InputLabel>
                             <Select
                                 name="prefecture"
-                                value={formData.prefecture|| ""}
+                                value={formData.prefecture || ""}
                                 onChange={handleChange}
                                 label="Prefecture"
                             >
@@ -359,7 +391,7 @@ function Register() {
                             fullWidth
                             label="Address"
                             name="company_addr"
-                            value={formData.company_addr|| ""}
+                            value={formData.company_addr || ""}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -369,7 +401,7 @@ function Register() {
                             fullWidth
                             label="Building Name"
                             name="building"
-                            value={formData.building|| ""}
+                            value={formData.building || ""}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -380,18 +412,18 @@ function Register() {
 
                             label="Telephone Number"
                             name="tel"
-                            value={formData.tel|| ""}
+                            value={formData.tel || ""}
                             onChange={handleChange}
                             placeholder="No hyphen"
                         />
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth >
+                        <FormControl fullWidth>
                             <InputLabel>Industry</InputLabel>
                             <Select
                                 name="type_of_industry"
-                                value={formData.type_of_industry|| ""}
+                                value={formData.type_of_industry || ""}
                                 onChange={handleChange}
                                 label="Industry"
                             >
@@ -438,11 +470,11 @@ function Register() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth >
+                        <FormControl fullWidth>
                             <InputLabel>Job Type</InputLabel>
                             <Select
                                 name="type"
-                                value={formData.type|| ""}
+                                value={formData.type || ""}
                                 onChange={handleChange}
                                 label="Job Type"
                             >
@@ -607,6 +639,11 @@ function Register() {
                     </Grid>
                 </Grid>
             </Box>
+            <AlertDialogBox
+                open={dialogState.open}
+                message={dialogState.message}
+                onClose={() => setDialogState({ open: false, message: '' })} // Close dialog
+            />
         </Container>
     );
 }
