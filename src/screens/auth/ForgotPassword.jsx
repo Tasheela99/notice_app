@@ -3,43 +3,44 @@ import { TextField, Button, Typography, Snackbar } from "@mui/material";
 import './ForgotPassword.css';
 import Divider from '@mui/material/Divider';
 import { Link } from 'react-router-dom';
-import AxiosInstance from "../../config/axiosInstance.js";
+import authApi from "../../api/AuthApi.js";
+import AlertDialogBox from '../../components/AlertDialogBox.jsx';
+
+
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
-
+    const [dialogState, setDialogState] = useState({
+        open: false,
+        message: '',
+    });
     const send = async () => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!email || !emailPattern.test(email)) {
-            setErrorMessage("Please enter a valid email address.");
-            setSnackbarSeverity("error");
-            setSnackbarMessage("Please enter a valid email address.");
-            setSnackbarOpen(true);
+            setDialogState({
+                open: true,
+                message: 'Please enter a valid email address',
+            });
             return;
         }
 
         try {
             setErrorMessage("");
-            const response = await AxiosInstance.post("/auth/forgot-password", { email });
-            setSnackbarSeverity("success");
-            setSnackbarMessage(`Instructions have been sent to ${email}.`);
-            setSnackbarOpen(true);
+            const response = await authApi.forgotPassword({ email });
+            setDialogState({
+                open: true,
+                message: `Instructions have been sent to ${email}.`,
+            });
+            setEmail('');
         } catch (error) {
-            setSnackbarSeverity("error");
-            setSnackbarMessage("Failed to send instructions. Please try again later.");
-            setSnackbarOpen(true);
-            console.error("Forgot Password error:", error);
+            setDialogState({
+                open: true,
+                message: `Error Occurred`,
+            });
         }
     }
-
-    const handleCloseSnackbar = () => {
-        setSnackbarOpen(false);
-    };
 
     return (
         <div className="login-outer">
@@ -69,21 +70,13 @@ const ForgotPassword = () => {
                 <Link to="/authentication/login" className="forgot-password">
                     Back To Login
                 </Link>
-            </div>
 
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                message={snackbarMessage}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Centering the Snackbar
-                sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)'
-                }}
-            />
+                <AlertDialogBox
+                    open={dialogState.open}
+                    message={dialogState.message}
+                    onClose={() => setDialogState({ open: false, message: '' })} // Close dialog
+                />
+            </div>
         </div>
     );
 }
