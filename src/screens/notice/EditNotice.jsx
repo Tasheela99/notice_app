@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import axios from 'axios';
+import AxiosInstance from "../../config/axiosInstance.js";
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Container,
@@ -30,7 +30,7 @@ const EditNotice = () => {
     const charCount = description.length;
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/api/articles/get-by-id/${id}`)
+        AxiosInstance.get(`/articles/get-by-id/${id}`)
             .then((response) => {
                 const notice = response.data.data;
                 setTitle(notice.title);
@@ -64,7 +64,7 @@ const EditNotice = () => {
         };
 
         try {
-            const response = await axios.put(`http://localhost:5000/api/articles/update/${id}`, updatedArticleData, {
+            const response = await AxiosInstance.put(`/articles/update/${id}`, updatedArticleData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

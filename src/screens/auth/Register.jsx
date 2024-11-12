@@ -15,10 +15,11 @@ import {
     Box,
     Alert
 } from '@mui/material';
-import axios from 'axios';
 import './Register.css';
 
 import Divider from "@mui/material/Divider";
+
+import AxiosInstance from "../../config/axiosInstance.js";
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -60,8 +61,8 @@ function Register() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
-        if (!formData.last_name) newErrors.surname = 'Surname is required';
-        if (!formData.first_name) newErrors.name = 'Name is required';
+        if (!formData.last_name) newErrors.surname = 'Surname is ';
+        if (!formData.first_name) newErrors.name = 'Name is ';
         if (!formData.email || !emailRegex.test(formData.email))
             newErrors.email = 'Please enter a valid email';
         if (!formData.password || !passwordRegex.test(formData.password)) {
@@ -75,7 +76,7 @@ function Register() {
     const handleSendVerificationCode = async () => {
         if (formData.email && !errors.email) {
             try {
-                const response = await axios.post(`http://localhost:5000/api/v1/auth/send-mail-to-verify`,
+                const response = await AxiosInstance.post(`/auth/send-mail-to-verify`,
                     {email: formData.email}
                 );
                 if (response.data.success) {
@@ -98,7 +99,7 @@ function Register() {
         }
 
         try {
-            const response = await axios.post(`http://localhost:5000/api/v1/auth/verify-mail`, {
+            const response = await AxiosInstance.post(`/auth/verify-mail`, {
                 email: formData.email,
                 code: enteredCode,
             });
@@ -137,7 +138,7 @@ function Register() {
 
         try {
             console.log("Form data being sent:", formData);
-            const response = await axios.post('http://localhost:5000/api/v1/auth/signup', formData);
+            const response = await AxiosInstance.post('/auth/signup', formData);
 
             console.log("Response received:", response);
 
@@ -182,7 +183,7 @@ function Register() {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
-                            required
+
                             label="First Name"
                             name="first_name"
                             value={formData.first_name}
@@ -194,7 +195,7 @@ function Register() {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
-                            required
+
                             label="Last Name"
                             name="last_name"
                             value={formData.last_name}
@@ -208,7 +209,7 @@ function Register() {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
-                            required
+
                             label="First Name (Furigana)"
                             name="first_name_furigana"
                             value={formData.first_name_furigana}
@@ -218,7 +219,7 @@ function Register() {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
-                            required
+
                             label="Last Name (Furigana)"
                             name="last_name_furigana"
                             value={formData.last_name_furigana}
@@ -248,7 +249,7 @@ function Register() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth >
                             <InputLabel>Position</InputLabel>
                             <Select
                                 name="position"
@@ -292,7 +293,7 @@ function Register() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth >
                             <InputLabel>Prefecture</InputLabel>
                             <Select
                                 name="prefecture"
@@ -376,7 +377,7 @@ function Register() {
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            required
+
                             label="Telephone Number"
                             name="tel"
                             value={formData.tel|| ""}
@@ -386,7 +387,7 @@ function Register() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth >
                             <InputLabel>Industry</InputLabel>
                             <Select
                                 name="type_of_industry"
@@ -437,7 +438,7 @@ function Register() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <FormControl fullWidth required>
+                        <FormControl fullWidth >
                             <InputLabel>Job Type</InputLabel>
                             <Select
                                 name="type"
@@ -512,7 +513,7 @@ function Register() {
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            required
+
                             label="Email Address"
                             name="email"
                             type="email"
@@ -558,7 +559,7 @@ function Register() {
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            required
+
                             label="Password"
                             name="password"
                             type="password"

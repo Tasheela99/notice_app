@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import AxiosInstance from "../../config/axiosInstance.js";
 import {
     Box,
     Container,
@@ -18,7 +18,7 @@ const NoticePage = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/articles/get-all')
+        AxiosInstance.get('/articles/get-all')
             .then((response) => {
                 const responseData = response.data;
                 if (responseData.status && Array.isArray(responseData.data)) {

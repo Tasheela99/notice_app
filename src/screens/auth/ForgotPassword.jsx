@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { TextField, Button, Typography, Snackbar } from "@mui/material";
-import './ForgotPassword.css'; // External CSS for styling
+import './ForgotPassword.css';
 import Divider from '@mui/material/Divider';
 import { Link } from 'react-router-dom';
+import AxiosInstance from "../../config/axiosInstance.js";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
 
         try {
             setErrorMessage("");
-            const response = await axios.post("http://localhost:5000/api/v1/auth/forgot-password", { email });
+            const response = await AxiosInstance.post("/auth/forgot-password", { email });
             setSnackbarSeverity("success");
             setSnackbarMessage(`Instructions have been sent to ${email}.`);
             setSnackbarOpen(true);
@@ -78,10 +78,10 @@ const ForgotPassword = () => {
                 message={snackbarMessage}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Centering the Snackbar
                 sx={{
-                    position: 'absolute', // Positioning it absolutely
-                    top: '50%', // Center vertically
-                    left: '50%', // Center horizontally
-                    transform: 'translate(-50%, -50%)' // Adjusting position to be centered
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
                 }}
             />
         </div>

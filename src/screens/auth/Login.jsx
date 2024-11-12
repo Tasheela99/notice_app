@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import axios from "axios";
+import AxiosInstance from "../../config/axiosInstance.js";
 import { TextField, Button, Typography, Snackbar } from "@mui/material";
 import './Login.css';
 import Divider from '@mui/material/Divider';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-
-    ;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -16,34 +14,47 @@ const Login = () => {
     const navigate = useNavigate();
 
     const login = async () => {
-        setErrorMessage("");
+        setErrorMessage('');
 
+        // Validation
         if (!email || !password) {
-            setErrorMessage("Please fill in all fields");
+            setErrorMessage('Please fill in all fields');
             setSnackbarOpen(true);
             return;
         }
 
         try {
-            const response = await axios.post("http://localhost:5000/api/v1/auth/login", {
+            const response = await AxiosInstance.post('/auth/login', {
                 email,
                 password
-            }, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
             });
-            const data = response.data;
-            localStorage.setItem("token", data.token);
-            navigate("/dashboard");
+
+            // Access token is in response.data.access_token
+            const { access_token } = response.data;
+
+            // Set expiration to 2 days from now
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 2);
+
+            // Set the cookie
+            document.cookie = `access_token=${access_token}; expires=${expirationDate.toUTCString()}; path=/`;
+
+            // Optional: Store user data in localStorage or context
+            //localStorage.setItem('user', JSON.stringify(user));
+
+            // Redirect to dashboard or home page
+            return navigate( '/dashboard'); // Or use React Router navigation
+
         } catch (error) {
+            let message = 'An error occurred. Please try again later.';
+
             if (error.response) {
-                setErrorMessage(error.response.data.message || "Login failed");
-            } else {
-                setErrorMessage("An error occurred. Please try again later.");
+                message = error.response.data.message || 'Login failed';
             }
+
+            setErrorMessage(message);
             setSnackbarOpen(true);
-            console.error("Login error:", error);
+            console.error('Login error:', error);
         }
     };
 

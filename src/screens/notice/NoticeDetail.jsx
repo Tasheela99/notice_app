@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import AxiosInstance from "../../config/axiosInstance.js";
 import {
     Container,
     Grid,
@@ -24,7 +24,7 @@ const NoticeDetail = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/articles/get-by-id/${id}`)
+        AxiosInstance.get(`/articles/get-by-id/${id}`)
             .then((response) => {
                 const responseData = response.data;
                 if (responseData.status) {
@@ -42,7 +42,7 @@ const NoticeDetail = () => {
 
     const handleDelete = (noticeId) => {
         if (window.confirm('Are you sure you want to delete this notice?')) {
-            axios.delete(`${process.env.REACT_APP_SERVER_URL}/articles/delete/${noticeId}`)
+            AxiosInstance.delete(`/articles/delete/${noticeId}`)
                 .then((response) => {
                     if (response.data.status) {
                         alert('Notice deleted successfully!');
