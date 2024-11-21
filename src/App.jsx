@@ -10,6 +10,7 @@ import EditNotice from "./screens/notice/EditNotice.jsx";
 import NoticeDetail from "./screens/notice/NoticeDetail.jsx";
 import Layout from "./components/Layout.jsx";
 import DashboardLayout from "./screens/dashboard/DashBoardLayout.jsx";
+import ViewUserProfile from "./screens/user/ViewUserProfile.jsx";
 
 function App() {
     // Example function to make a POST request
@@ -35,6 +36,7 @@ function App() {
                         <Route path="announcements" element={<Announcements />} />
                         <Route path="notices/notice/:id" element={<NoticeDetail />} />
                         <Route path="notices/notice/edit/:id" element={<EditNotice />} />
+                        <Route path="users/profile" element={<ViewUserProfile />} />
                     </Route>
                 </Route>
             </Routes>

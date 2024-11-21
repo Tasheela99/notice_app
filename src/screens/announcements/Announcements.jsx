@@ -15,7 +15,7 @@ import {
     CircularProgress,
 } from '@mui/material';
 
-const Announcements = () => {
+const Announcements = (user) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [text, setText] = useState('');
@@ -70,6 +70,8 @@ const Announcements = () => {
             setLoading(false);
         }
     };
+
+    console.log(user)
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4 }}>

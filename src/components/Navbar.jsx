@@ -1,12 +1,16 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Button } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu'; // Menu icon for opening sidebar
-import { Link } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import { AppBar, Toolbar, Typography, IconButton, Avatar, Stack } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = ({ toggleSidebar, user }) => {
+    useEffect(() => {
+        console.log(localStorage.getItem("userData"))
+        console.log(user)
+    }, []);
+
     return (
         <AppBar position="fixed">
-            <Toolbar style={{backgroundColor:'white',color:'black'}}>
+            <Toolbar style={{ backgroundColor: 'white', color: 'black' }}>
                 <IconButton
                     edge="start"
                     color="inherit"
@@ -17,15 +21,24 @@ const Navbar = ({ toggleSidebar }) => {
                     <MenuIcon />
                 </IconButton>
 
-                {/* Logo or Title */}
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-
+                {/* Title */}
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                    Dashboard
                 </Typography>
 
-                {/* Links to different authentication routes */}
-                <Button color="inherit" component={Link} to="/authentication/login">
-                    Login
-                </Button>
+                {/* User Info */}
+                {user && (
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <Typography variant="body1" color="inherit">
+                            {user.first_name} {user.last_name}
+                        </Typography>
+                        <Avatar
+                            alt={`${user.first_name} ${user.last_name}`}
+                            src={user.profile_imageURL || 'https://via.placeholder.com/150'}
+                            sx={{ width: 40, height: 40 }}
+                        />
+                    </Stack>
+                )}
             </Toolbar>
         </AppBar>
     );

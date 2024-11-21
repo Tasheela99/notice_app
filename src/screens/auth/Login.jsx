@@ -5,6 +5,8 @@ import './Login.css';
 import Divider from '@mui/material/Divider';
 import { Link, useNavigate } from 'react-router-dom';
 import authApi from "../../api/AuthApi.js";
+import axios from "axios";
+import {setAxiosHeaders} from "../../config/axiosInstance.js";
 
 const Login = () => {
 
@@ -16,6 +18,7 @@ const Login = () => {
 
     const login = async () => {
         setErrorMessage('');
+
         if (!email || !password) {
             setErrorMessage('Please fill in all fields');
             setSnackbarOpen(true);
@@ -25,10 +28,10 @@ const Login = () => {
         try {
             const response = await authApi.signIn({ email, password });
             const { access_token } = response.data;
-            const expirationDate = new Date();
-            expirationDate.setDate(expirationDate.getDate() + 2);
-            document.cookie = `access_token=${access_token}; expires=${expirationDate.toUTCString()}; path=/`;
-            return navigate( '/dashboard');
+            localStorage.setItem("userData", response)
+            document.cookie = `access_token=${access_token}; path=/; secure=true; samesite=strict`;
+            setAxiosHeaders((access_token));
+            return navigate('/dashboard');
         } catch (error) {
             let message = 'An error occurred. Please try again later.';
             if (error.response) {
@@ -39,6 +42,7 @@ const Login = () => {
             console.error('Login error:', error);
         }
     };
+
 
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
