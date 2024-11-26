@@ -138,8 +138,8 @@ function UserProfileDetails() {
                             mr: 3,
                             bgcolor: 'primary.main'
                         }}
-                        src={userDetails.avatar || ''} // Use the avatar URL or fall back to empty string
-                    >{!userDetails.avatar && <AccountCircle sx={{ width: 60, height: 60 }} />}
+                        src={userDetails.profile_imageURL || ''} // Use the profile_imageURL URL or fall back to empty string
+                    >{!userDetails.profile_imageURL && <AccountCircle sx={{ width: 60, height: 60 }} />}
                     </Avatar>
                     <Box>
                         <Typography variant="h5">

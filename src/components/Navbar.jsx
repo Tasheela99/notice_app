@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Avatar, Stack } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import {Link} from "react-router-dom";
 
 const Navbar = ({ toggleSidebar, user }) => {
     useEffect(() => {
@@ -30,7 +31,15 @@ const Navbar = ({ toggleSidebar, user }) => {
                 {user && (
                     <Stack direction="row" spacing={2} alignItems="center">
                         <Typography variant="body1" color="inherit">
-                            {user.first_name} {user.last_name}
+                            <Link
+                                to={`/dashboard/users/profile`}
+                                style={{
+                                    textDecoration: 'none',
+                                    color: 'inherit'
+                                }}
+                            >
+                                {user.first_name} {user.last_name}
+                            </Link>
                         </Typography>
                         <Avatar
                             alt={`${user.first_name} ${user.last_name}`}
