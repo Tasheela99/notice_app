@@ -14,8 +14,35 @@ import {
 import {AccountCircle, Close, PhotoCamera} from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
+import userApi from "../../api/UserApi.js";
 
 function EditUserProfile({ open, onClose, onSave, editableDetails, onFieldChange, onAvatarChange }) {
+    const handleSave = async () => {
+        try {
+            const formData = new FormData();
+            for (const key in editableDetails) {
+                formData.append(key, editableDetails[key]);
+            }
+
+            if (editableDetails.avatar instanceof File) {
+                formData.append('avatar', editableDetails.avatar);
+            }
+
+            const response = await userApi.update(formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                },
+            });
+            onSave(response.data);
+            onClose();
+        } catch (error) {
+            alert('Failed to update profile. Please try again.');
+        }
+    };
+
+
+
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle variant="h5">Edit User Profile</DialogTitle>
@@ -347,7 +374,7 @@ function EditUserProfile({ open, onClose, onSave, editableDetails, onFieldChange
                         Close
                     </Button>
                     <Button
-                        onClick={() => onSave(editableDetails)}
+                        onClick={handleSave}
                         color="primary"
                         variant="outlined"
                         startIcon={<SaveIcon />}

@@ -8,71 +8,47 @@ import {
     Divider,
     Button,
     Avatar,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { AccountCircle } from '@mui/icons-material';
 import EditUserProfile from "./EditUserProfile.jsx";
 import DeleteIcon from "@mui/icons-material/Delete";
+import userApi from "../../api/UserApi.js";
 
 function UserProfileDetails() {
-    // State to store user details
     const [userDetails, setUserDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    // State for dialog
     const [openDialog, setOpenDialog] = useState(false);
     const [editableDetails, setEditableDetails] = useState({});
 
-    // Simulated user data fetch (replace with actual API call)
     useEffect(() => {
         const fetchUserDetails = async () => {
             try {
-                const mockUserData = {
-                    first_name: 'John',
-                    last_name: 'Doe',
-                    first_name_furigana: 'ジョン',
-                    last_name_furigana: 'ドウ',
-                    company_name: 'Tech Innovations Inc.',
-                    company_name_furigana: 'テックイノベーションズ',
-                    position: 'Executive',
-                    postcode: '100-0005',
-                    prefecture: 'hokkaido',
-                    company_addr: '1-2-3 Marunouchi',
-                    building: 'Tech Tower 5F',
-                    tel: '080-1234-5678',
-                    email: 'john.doe@example.com',
-                    type_of_industry: 'it_communications_internet',
-                    type: 'information_processing',
-                    avatar:'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
-                };
-                setUserDetails(mockUserData);
-                setIsLoading(false);
+                const response = await userApi.profile({
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                setUserDetails(response.data);
+                setIsLoading(false); // Add this line
             } catch (error) {
                 console.error('Error fetching user details', error);
-                setIsLoading(false);
+                setIsLoading(false); // Add this line
             }
         };
 
         fetchUserDetails();
     }, []);
 
-    // Open dialog and set editable details
     const handleEditClick = () => {
         setEditableDetails(userDetails);
         setOpenDialog(true);
     };
 
-    // Handle dialog close
     const handleCloseDialog = () => {
         setOpenDialog(false);
     };
 
-    // Handle form field change
     const handleFieldChange = (e) => {
         const { name, value } = e.target;
         setEditableDetails((prevState) => ({
@@ -120,7 +96,7 @@ function UserProfileDetails() {
         </Grid>
     );
 
-    if (isLoading) {
+    if (isLoading || !userDetails) {
         return (
             <Container
                 maxWidth="md"
@@ -137,7 +113,7 @@ function UserProfileDetails() {
 
     return (
         <Container
-            maxWidth="sm"
+            maxWidth="xxl"
             sx={{
                 position: 'absolute',
                 top: 80,

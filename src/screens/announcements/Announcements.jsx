@@ -14,6 +14,8 @@ import {
     Alert,
     CircularProgress,
 } from '@mui/material';
+import { useSelector } from 'react-redux';
+
 
 const Announcements = (user) => {
     const [title, setTitle] = useState('');
@@ -24,6 +26,7 @@ const Announcements = (user) => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const charCount = description.length;
+    const userState = useSelector((state)=> state.auth)
 
     const handleTitleChange = (e) => setTitle(e.target.value);
     const handleDescriptionChange = (e) => setDescription(e.target.value);
@@ -79,6 +82,9 @@ const Announcements = (user) => {
                 <Grid item xs={12} md={8}>
                     <Card variant="outlined">
                         <CardContent>
+                            <h1>
+                                {userState.first_name}
+                            </h1>
                             {message && <Alert severity="info" sx={{ mb: 2 }}>{message}</Alert>}
                             <Typography variant="h6" gutterBottom>
                                 Title

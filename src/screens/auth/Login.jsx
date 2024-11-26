@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider';
 import { Link, useNavigate } from 'react-router-dom';
 import authApi from "../../api/AuthApi.js";
 import axios from "axios";
-import {setAxiosHeaders} from "../../config/axiosInstance.js";
+import { setAxiosHeaders } from "../../config/axiosInstance.js";
 
 const Login = () => {
 
@@ -15,6 +15,7 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const navigate = useNavigate();
+    
 
     const login = async () => {
         setErrorMessage('');

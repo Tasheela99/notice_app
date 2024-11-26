@@ -4,10 +4,14 @@ import Navbar from './Navbar.jsx';
 import Sidebar from './Sidebar.jsx';
 import userApi from "../api/UserApi.js";
 import Cookies from 'js-cookie';
+import { useDispatch, useSelector } from 'react-redux';
+import {  SETUSERPROFILE } from '../constants/AuthCons.jsx';
 
 const Layout = () => {
     const [isSidebarVisible, setIsSidebarVisible] = useState(false);
     const [user, setUser] = useState(null); // State to hold user data
+    const dispatch = useDispatch()
+    
 
     const toggleSidebar = () => {
         setIsSidebarVisible(!isSidebarVisible);
@@ -28,6 +32,7 @@ const Layout = () => {
                    token
                 });
                 console.log(response.data)
+                dispatch({ type: SETUSERPROFILE, payload:response.data })
                 setUser(response.data);
             } catch (error) {
                 console.error('Error fetching user profile:', error);

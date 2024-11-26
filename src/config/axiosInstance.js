@@ -20,7 +20,6 @@ axiosInstance.interceptors.request.use(
 );
 
 export const setAxiosHeaders = (token) =>{
-    alert("setting interceptor")
     axiosInstance.interceptors.request.use(function (config) {
         config.headers.Authorization =  "Bearer " + token;
         return config;
